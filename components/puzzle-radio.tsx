@@ -358,7 +358,7 @@ export function PuzzleRadio() {
                 Entesos
               </motion.button>
             </motion.div>
-          </motion.motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
