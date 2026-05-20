@@ -6,12 +6,30 @@ import Image from 'next/image'
 import { useGameStore } from '@/hooks/use-game-store'
 
 const TARGET_FREQUENCY = 19.38
-const KEYWORDS = ['LLEGENDA', 'EXEMPLE', 'SOLIDARITAT']
+
+// Definició de les paraules amb opcions múltiples per fer-ho jugable
+const WORD_SLOTS = [
+  {
+    correct: 'LLEGENDA',
+    options: ['LLEGENDA', 'HISTÒRIA', 'MEMÒRIA', 'VICTÒRIA'],
+    hint: 'Alguna cosa que es recorda i es transmet de generació en generació...',
+  },
+  {
+    correct: 'EXEMPLE',
+    options: ['MIRACLE', 'EXEMPLE', 'HONOR', 'REGAL'],
+    hint: 'Alguna cosa que serveix de model a seguir per altres...',
+  },
+  {
+    correct: 'SOLIDARITAT',
+    options: ['VALENTIA', 'AMISTAT', 'SOLIDARITAT', 'LLIBERTAT'],
+    hint: 'El sentiment de compartir i ajudar els altres en moments difícils...',
+  },
+]
 
 const HINTS = [
-  'La freqüència objectiu coincideix amb l\'any de la batalla: 19.38 MHz.',
-  'El missatge conté tres paraules clau que descriuen l\'esperit dels voluntaris.',
-  'Les paraules són: LLEGENDA, EXEMPLE i SOLIDARITAT.',
+  'Pensa en què van representar els voluntaris internacionals: persones que van deixar els seus països per ajudar.',
+  'Les Brigades Internacionals eren formades per voluntaris de 50 països que van venir a lluitar contra el feixisme.',
+  'La primera paraula descriu com es recorden aquests herois avui. La segona, què representen per a nosaltres. La tercera, per què van venir.',
 ]
 
 export function PuzzleRadio() {
@@ -19,7 +37,7 @@ export function PuzzleRadio() {
   const [feedback, setFeedback] = useState<string>('')
   const [isLocked, setIsLocked] = useState(false)
   const [showTranscription, setShowTranscription] = useState(false)
-  const [keywords, setKeywords] = useState(['', '', ''])
+  const [keywords, setKeywords] = useState<(string | null)[]>([null, null, null])
   const [keywordsFeedback, setKeywordsFeedback] = useState('')
   const [solved, setSolved] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
@@ -50,15 +68,15 @@ export function PuzzleRadio() {
     }
   }
 
-  const handleKeywordChange = (index: number, value: string) => {
+  const handleKeywordSelect = (index: number, value: string) => {
     const newKeywords = [...keywords]
-    newKeywords[index] = value.toUpperCase()
+    newKeywords[index] = value
     setKeywords(newKeywords)
     setKeywordsFeedback('')
   }
 
   const checkKeywords = () => {
-    const allCorrect = keywords.every((kw, i) => kw === KEYWORDS[i])
+    const allCorrect = keywords.every((kw, i) => kw === WORD_SLOTS[i].correct)
     
     if (allCorrect) {
       setKeywordsFeedback('CORRECTE - Missatge transcrit!')
@@ -67,7 +85,9 @@ export function PuzzleRadio() {
       addToInventory('radio')
       setShowMessage(true)
     } else {
-      setKeywordsFeedback('ERROR - Alguna paraula no és correcta')
+      // Mostrar quantes són correctes
+      const correctCount = keywords.filter((kw, i) => kw === WORD_SLOTS[i].correct).length
+      setKeywordsFeedback(`ERROR - ${correctCount} de 3 paraules correctes. Revisa les opcions.`)
     }
   }
 
@@ -196,33 +216,58 @@ export function PuzzleRadio() {
               <div className="mb-6">
                 <p className="font-mono text-xs text-[#4ade80] uppercase tracking-widest mb-2">Missatge Rebut</p>
                 <div className="bg-black/40 border border-[#4ade80]/30 p-4 text-[#f5e6d3]/80 font-mono text-sm leading-relaxed">
+                  <p className="mb-3 text-[#f5e6d3]/60 italic">
+                    [Transmissió de les Brigades Internacionals - Sector Gandesa, 1938]
+                  </p>
                   <p className="mb-2">&quot;Aquí Brigades Internacionals, sector Gandesa.&quot;</p>
                   <p className="mb-2">
-                    &quot;Els voluntaris que van venir a lluitar per la República seran sempre una <span className="text-[#fbbf24]">______</span>.&quot;
+                    &quot;Els voluntaris que van venir a lluitar per la República seran sempre una{' '}
+                    <span className={`px-2 py-0.5 ${keywords[0] ? 'bg-[#4ade80]/20 text-[#4ade80]' : 'bg-[#fbbf24]/20 text-[#fbbf24]'}`}>
+                      {keywords[0] || '[PARAULA 1]'}
+                    </span>.&quot;
                   </p>
                   <p className="mb-2">
-                    &quot;El seu sacrifici és un <span className="text-[#fbbf24]">______</span> per a tota la humanitat.&quot;
+                    &quot;El seu sacrifici és un{' '}
+                    <span className={`px-2 py-0.5 ${keywords[1] ? 'bg-[#4ade80]/20 text-[#4ade80]' : 'bg-[#fbbf24]/20 text-[#fbbf24]'}`}>
+                      {keywords[1] || '[PARAULA 2]'}
+                    </span>{' '}per a tota la humanitat.&quot;
                   </p>
                   <p>
-                    &quot;Van venir per <span className="text-[#fbbf24]">______</span> amb el poble espanyol. Fi del missatge.&quot;
+                    &quot;Van venir per{' '}
+                    <span className={`px-2 py-0.5 ${keywords[2] ? 'bg-[#4ade80]/20 text-[#4ade80]' : 'bg-[#fbbf24]/20 text-[#fbbf24]'}`}>
+                      {keywords[2] || '[PARAULA 3]'}
+                    </span>{' '}amb el poble espanyol. Fi del missatge.&quot;
                   </p>
                 </div>
               </div>
 
               <div className="mb-4">
-                <p className="font-mono text-xs text-[#b8a038] uppercase tracking-widest mb-3">Transcriu les Paraules Clau</p>
-                <div className="grid grid-cols-3 gap-4">
-                  {KEYWORDS.map((_, i) => (
-                    <div key={i}>
-                      <p className="font-mono text-xs text-[#f5e6d3]/50 mb-1">Paraula {i + 1}</p>
-                      <input
-                        type="text"
-                        value={keywords[i]}
-                        onChange={(e) => handleKeywordChange(i, e.target.value)}
-                        disabled={solved}
-                        className="w-full bg-black/50 border-2 border-[#b8a038]/50 px-3 py-2 text-[#f5e6d3] font-mono text-center uppercase tracking-widest focus:border-[#b8a038] focus:outline-none disabled:opacity-50"
-                        placeholder="______"
-                      />
+                <p className="font-mono text-xs text-[#b8a038] uppercase tracking-widest mb-4">Selecciona les Paraules Correctes</p>
+                <div className="space-y-4">
+                  {WORD_SLOTS.map((slot, i) => (
+                    <div key={i} className="bg-black/30 border border-[#b8a038]/30 p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="font-mono text-xs text-[#f5e6d3]/70">Paraula {i + 1}</p>
+                        <p className="font-mono text-xs text-[#fbbf24]/70 italic">{slot.hint}</p>
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        {slot.options.map((option) => (
+                          <motion.button
+                            key={option}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => !solved && handleKeywordSelect(i, option)}
+                            disabled={solved}
+                            className={`px-3 py-2 font-mono text-sm uppercase tracking-wider border-2 transition-all ${
+                              keywords[i] === option
+                                ? 'border-[#4ade80] bg-[#4ade80]/20 text-[#4ade80]'
+                                : 'border-[#b8a038]/40 text-[#f5e6d3]/70 hover:border-[#b8a038] hover:bg-[#b8a038]/10'
+                            } disabled:cursor-not-allowed`}
+                          >
+                            {option}
+                          </motion.button>
+                        ))}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -295,7 +340,7 @@ export function PuzzleRadio() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={checkKeywords}
-                disabled={keywords.some(k => k === '')}
+                disabled={keywords.some(k => k === null)}
                 className="px-6 py-2 bg-[#b8a038] text-black font-bold uppercase text-sm tracking-widest hover:bg-[#4ade80] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Verificar Paraules
@@ -339,11 +384,14 @@ export function PuzzleRadio() {
               </div>
               <div className="space-y-3 text-[#f5e6d3]/80 font-mono text-sm leading-relaxed border-l-2 border-[#4ade80]/30 pl-4">
                 <p>
-                  El missatge de les Brigades Internacionals ha estat transcrit correctament.
+                  El missatge de les Brigades Internacionals ha estat desxifrat correctament.
                 </p>
                 <p>
-                  Les paraules <span className="text-[#4ade80]">LLEGENDA</span>, <span className="text-[#4ade80]">EXEMPLE</span> i <span className="text-[#4ade80]">SOLIDARITAT</span> 
+                  Les paraules <span className="text-[#4ade80]">{WORD_SLOTS[0].correct}</span>, <span className="text-[#4ade80]">{WORD_SLOTS[1].correct}</span> i <span className="text-[#4ade80]">{WORD_SLOTS[2].correct}</span> 
                   {' '}resumeixen l&apos;esperit dels voluntaris internacionals que van venir a lluitar per la República.
+                </p>
+                <p className="text-[#f5e6d3]/60 text-xs mt-2">
+                  Les Brigades Internacionals van estar formades per uns 35.000 voluntaris de més de 50 països que van venir a Espanya entre 1936 i 1938 per lluitar contra el feixisme.
                 </p>
                 <p className="text-[#fbbf24]">
                   + Ràdio de comunicacions afegida a l&apos;inventari
