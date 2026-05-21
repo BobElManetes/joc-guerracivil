@@ -329,26 +329,30 @@ export function PuzzleMorse() {
 
         {/* Actions */}
         <div className="flex items-center justify-between">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={requestHint}
-            disabled={hints.length >= HINTS.length}
-            className="px-4 py-2 border border-[#fbbf24] text-[#fbbf24] font-mono text-xs uppercase tracking-widest hover:bg-[#fbbf24]/10 transition-colors disabled:opacity-50"
-          >
-            Demanar Ajuda
-          </motion.button>
+          {!solved ? (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={requestHint}
+              disabled={hints.length >= HINTS.length}
+              className="px-4 py-2 border border-[#fbbf24] text-[#fbbf24] font-mono text-xs uppercase tracking-widest hover:bg-[#fbbf24]/10 transition-colors disabled:opacity-50"
+            >
+              Demanar Ajuda
+            </motion.button>
+          ) : (
+            <div />
+          )}
 
           {solved && (
             <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              whileHover={{ scale: 1.05 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(74, 222, 128, 0.5)' }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => { setShowSuccess(false); nextScene(); }}
-              className="px-6 py-2 bg-[#4ade80] text-black font-bold uppercase text-sm tracking-widest"
+              onClick={() => nextScene()}
+              className="px-8 py-3 bg-[#4ade80] text-black font-bold uppercase text-sm tracking-widest border-2 border-[#4ade80] hover:bg-[#4ade80]/90 transition-all"
             >
-              Continuar
+              Continuar al Seguent Nivell
             </motion.button>
           )}
         </div>
