@@ -27,6 +27,20 @@ export function DialogueBox({ text, onComplete, showContinue = false, onContinue
   }, [text])
 
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code !== 'Space') return
+      e.preventDefault()
+      if (!isComplete) {
+        skipToEnd()
+      } else if (showContinue && onContinue) {
+        onContinue()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isComplete, showContinue, onContinue, skipToEnd])
+
+  useEffect(() => {
     if (displayedText === text) {
       setIsComplete(true)
       onComplete?.()
