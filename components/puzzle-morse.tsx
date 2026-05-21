@@ -287,9 +287,26 @@ export function PuzzleMorse() {
                 <>
                   <p className="font-mono text-xs text-[#4ade80] uppercase tracking-widest mb-2">Missatge Desxifrat</p>
                   <p className="font-serif text-3xl text-[#4ade80] mb-4">{FINAL_WORD}</p>
-                  <p className="font-mono text-sm text-[#f5e6d3]/70">
+                  <p className="font-mono text-sm text-[#f5e6d3]/70 mb-6">
                     Has demostrat un coneixement excel.lent sobre les Brigades Internacionals.
                   </p>
+                  <motion.button
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(74, 222, 128, 0.5)' }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      if (!solved) {
+                        setSolved(true)
+                        solvePuzzle('morse')
+                        addToInventory('ordre')
+                      }
+                      nextScene()
+                    }}
+                    className="px-8 py-3 bg-[#4ade80] text-black font-bold uppercase text-sm tracking-widest border-2 border-[#4ade80] hover:bg-[#4ade80]/90 transition-all"
+                  >
+                    Continuar al Seguent Nivell
+                  </motion.button>
                 </>
               ) : (
                 <>
