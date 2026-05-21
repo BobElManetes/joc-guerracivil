@@ -113,7 +113,7 @@ export function IntroScreen() {
             className="bg-black/70 backdrop-blur-sm border-2 border-[#b8a038] p-6 mb-8 text-left"
           >
             <p className="font-mono text-sm leading-relaxed text-[#f5e6d3]/90">
-              <span className="text-[#b8a038] font-bold">Agost de 1938.</span> La República Espanyola s&apos;enfronta al seu últim combat decisiu. 
+              <span className="text-[#b8a038] font-bold">Agost de 1938 - Joc Interactiu Fet per Marcel, Martí, Eloi i Asier.</span> La República Espanyola s&apos;enfronta al seu últim combat decisiu. 
               Les Brigades Internacionals i l&apos;Exèrcit Popular tanquen files a la Serra de Pàndols.
             </p>
             <div className="w-16 h-0.5 bg-[#b8a038]/50 my-4" />
