@@ -343,7 +343,7 @@ export function PuzzleMorse() {
             <div />
           )}
 
-          {solved && (
+          {solved && !showSuccess && (
             <motion.button
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -398,10 +398,13 @@ export function PuzzleMorse() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setShowSuccess(false)}
-                className="mt-6 w-full px-6 py-2 bg-[#4ade80] text-black font-bold uppercase text-sm tracking-widest"
+                onClick={() => {
+                  setShowSuccess(false)
+                  nextScene()
+                }}
+                className="mt-6 w-full px-6 py-3 bg-[#4ade80] text-black font-bold uppercase text-sm tracking-widest hover:bg-[#4ade80]/90 transition-all"
               >
-                Entesos
+                Continuar al Seguent Nivell
               </motion.button>
             </motion.div>
           </motion.div>
