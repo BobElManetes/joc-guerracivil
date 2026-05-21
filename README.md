@@ -1,6 +1,6 @@
 # joc-guerracivil
 
-AUTOMATIC TEMPLATE for INFO
+# AUTOMATIC TEMPLATE for INFO
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with git
 
