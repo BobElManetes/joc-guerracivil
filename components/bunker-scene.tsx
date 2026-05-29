@@ -28,7 +28,7 @@ const SCENES = [
   },
   {
     id: 'puzzle2',
-    title: 'Ràdio de La Pasionaria',
+    title: 'Ràdio Militar',
     subtitle: 'Comunicacions',
     dialogue: 'La ràdio està malmesa però funciona. Sintonitza la freqüència 19.38 MHz per contactar amb el comandament de les Brigades a Gandesa. Un cop rebut el missatge, transcriu les tres paraules clau.',
     image: '/images/vintage-radio.jpg',
