@@ -115,7 +115,7 @@ export function PuzzleRadio() {
             )}
           </div>
           <div className="flex-1">
-            <h3 className="font-serif text-xl text-[#f5e6d3] mb-2">Ràdio de La Pasionaria</h3>
+            <h3 className="font-serif text-xl text-[#f5e6d3] mb-2">Ràdio Militar</h3>
             <p className="font-mono text-xs text-[#f5e6d3]/70 leading-relaxed">
               Sintonitza la freqüència 19.38 MHz per rebre el missatge de les Brigades Internacionals.
               Un cop rebut, transcriu les tres paraules clau del missatge.
