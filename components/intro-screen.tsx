@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useGameStore } from '@/hooks/use-game-store'
@@ -10,6 +10,7 @@ export function IntroScreen() {
   const [showContent, setShowContent] = useState(false)
   const [skipTypewriter, setSkipTypewriter] = useState(false)
   const startGame = useGameStore((state) => state.startGame)
+  const audioRef = useRef<HTMLAudioElement>(null)
 
   const title = "L'Eco de la Retirada"
   const subtitle = "Batalla de l'Ebre, 1938"
@@ -19,6 +20,28 @@ export function IntroScreen() {
     setShowContent(true)
     setSkipTypewriter(true)
   }, [])
+
+  // Play background music on mount
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.play().catch(() => {
+        // Auto-play might be blocked by browser policy
+      })
+    }
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
+      }
+    }
+  }, [])
+
+  // Stop music when game starts
+  const handleStartGame = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause()
+    }
+    startGame()
+  }, [startGame])
 
   useEffect(() => {
     if (skipTypewriter) return
@@ -61,6 +84,14 @@ export function IntroScreen() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/40" />
       </div>
+
+      {/* Background Music */}
+      <audio 
+        ref={audioRef}
+        src="/audio/ay-carmela.mp3"
+        loop
+        volume={0.5}
+      />
 
       {/* Film Grain Overlay */}
       <div className="film-grain" />
@@ -152,7 +183,7 @@ export function IntroScreen() {
             transition={{ duration: 0.5, delay: 0.6 }}
             whileHover={{ scale: 1.05, backgroundColor: '#4ade80' }}
             whileTap={{ scale: 0.95 }}
-            onClick={startGame}
+            onClick={handleStartGame}
             className="px-10 py-4 bg-[#b8a038] text-black font-bold uppercase text-sm tracking-widest transition-colors"
           >
             Entrar al Búnquer
