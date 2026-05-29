@@ -36,7 +36,7 @@ const QUIZ_QUESTIONS = [
     explanation: 'Les Brigades van venir a Espanya per lluitar contra l\'avanç del feixisme a Europa.',
   },
   {
-    question: 'Quina famosa batalla de l\'Ebre va ser clau per a les Brigades Internacionals?',
+    question: 'Quina famosa batalla va ser clau per a les Brigades Internacionals?',
     options: ['Batalla de Madrid', 'Batalla de Brunete', 'Batalla de l\'Ebre', 'Batalla de Terol'],
     correct: 2, // Batalla de l'Ebre
     letter: 'A',
