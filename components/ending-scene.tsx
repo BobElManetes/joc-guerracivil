@@ -3,7 +3,48 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { useGameStore } from '@/hooks/use-game-store'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+
+// Confetti component
+function Confetti() {
+  const confettiPieces = Array.from({ length: 50 }, (_, i) => ({
+    id: i,
+    left: Math.random() * 100,
+    delay: Math.random() * 0.5,
+    duration: 2 + Math.random() * 1,
+  }))
+
+  return (
+    <>
+      {confettiPieces.map((piece) => (
+        <motion.div
+          key={piece.id}
+          initial={{ 
+            opacity: 1, 
+            y: -20,
+            x: piece.left,
+            rotate: 0,
+          }}
+          animate={{ 
+            opacity: 0, 
+            y: window.innerHeight + 100,
+            rotate: 360,
+          }}
+          transition={{
+            duration: piece.duration,
+            delay: piece.delay,
+            ease: 'easeIn',
+          }}
+          className="fixed w-2 h-2 pointer-events-none"
+          style={{
+            left: `${piece.left}%`,
+            backgroundColor: ['#4ade80', '#fbbf24', '#b8a038'][Math.floor(Math.random() * 3)],
+          }}
+        />
+      ))}
+    </>
+  )
+}
 
 export function EndingScene() {
   const timeRemaining = useGameStore((state) => state.timeRemaining)
@@ -14,14 +55,21 @@ export function EndingScene() {
   const escaped = timeRemaining > 0 && solvedPuzzles.length === 4
   const [showCelebration, setShowCelebration] = useState(true)
   const [showContent, setShowContent] = useState(false)
+  const audioRef = useRef<HTMLAudioElement>(null)
+
+  useEffect(() => {
+    if (escaped && audioRef.current) {
+      audioRef.current.play()
+    }
+  }, [escaped])
 
   useEffect(() => {
     if (escaped) {
-      // Mostrar celebració durant 4 segons, després mostrar contingut
+      // Mostrar celebració durant 10 segons
       const timer = setTimeout(() => {
         setShowCelebration(false)
         setShowContent(true)
-      }, 4000)
+      }, 10000)
       return () => clearTimeout(timer)
     } else {
       setShowCelebration(false)
@@ -57,24 +105,55 @@ export function EndingScene() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95"
           >
-            {/* Emojis de celebració */}
+            {/* Audio de fons */}
+            <audio ref={audioRef} src="/audio/mission-passed.mp3" />
+
+            {/* Confetti animat */}
+            <Confetti />
+
+            {/* Emojis grans de celebració */}
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 200, damping: 10 }}
-              className="text-8xl mb-8"
+              transition={{ type: 'spring', stiffness: 150, damping: 15 }}
+              className="text-9xl mb-12"
             >
               🎉🏆🎉
             </motion.div>
 
-            {/* Text MISSIÓ COMPLERTA gran i animat */}
+            {/* Text "Enhorabona has guanyat" gran i brillant */}
+            <motion.div
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5, type: 'spring', stiffness: 100 }}
+              className="text-center mb-6"
+            >
+              <motion.p
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
+                className="font-serif text-5xl md:text-7xl text-[#4ade80] tracking-wider mb-2"
+                style={{ textShadow: '0 0 60px rgba(74, 222, 128, 0.9), 0 0 20px rgba(251, 191, 36, 0.3)' }}
+              >
+                ENHORABONA
+              </motion.p>
+              <motion.p
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className="font-serif text-6xl md:text-8xl text-[#fbbf24] tracking-wider"
+                style={{ textShadow: '0 0 60px rgba(251, 191, 36, 0.9), 0 0 20px rgba(74, 222, 128, 0.3)' }}
+              >
+                HAS GUANYAT
+              </motion.p>
+            </motion.div>
+
+            {/* Text principal */}
             <motion.h1
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3, type: 'spring' }}
-              className="font-serif text-6xl md:text-8xl text-[#4ade80] tracking-wider text-center mb-4"
+              transition={{ delay: 0.8, type: 'spring' }}
+              className="font-serif text-5xl md:text-7xl text-[#4ade80] tracking-wider text-center mb-8"
               style={{ textShadow: '0 0 40px rgba(74, 222, 128, 0.8)' }}
             >
               MISSIÓ COMPLERTA
@@ -83,8 +162,8 @@ export function EndingScene() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="font-mono text-xl text-[#fbbf24] tracking-widest"
+              transition={{ delay: 1.1 }}
+              className="font-mono text-2xl text-[#fbbf24] tracking-widest mb-8"
             >
               ✨ HAS ESCAPAT DEL BÚNQUER ✨
             </motion.p>
@@ -93,24 +172,15 @@ export function EndingScene() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-              className="text-5xl mt-8 flex gap-4"
+              transition={{ delay: 1.4 }}
+              className="text-6xl flex gap-6"
             >
-              <motion.span animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 1, delay: 0 }}>🌟</motion.span>
-              <motion.span animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }}>🎊</motion.span>
-              <motion.span animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }}>🏅</motion.span>
-              <motion.span animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 1, delay: 0.6 }}>🎊</motion.span>
-              <motion.span animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 1, delay: 0.8 }}>🌟</motion.span>
+              <motion.span animate={{ y: [0, -15, 0] }} transition={{ repeat: Infinity, duration: 1.2, delay: 0 }}>🌟</motion.span>
+              <motion.span animate={{ y: [0, -15, 0] }} transition={{ repeat: Infinity, duration: 1.2, delay: 0.2 }}>🎊</motion.span>
+              <motion.span animate={{ y: [0, -15, 0] }} transition={{ repeat: Infinity, duration: 1.2, delay: 0.4 }}>🏅</motion.span>
+              <motion.span animate={{ y: [0, -15, 0] }} transition={{ repeat: Infinity, duration: 1.2, delay: 0.6 }}>🎊</motion.span>
+              <motion.span animate={{ y: [0, -15, 0] }} transition={{ repeat: Infinity, duration: 1.2, delay: 0.8 }}>🌟</motion.span>
             </motion.div>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.5 }}
-              className="font-mono text-sm text-[#f5e6d3]/60 mt-8"
-            >
-              Carregant resultats...
-            </motion.p>
           </motion.div>
         )}
       </AnimatePresence>
