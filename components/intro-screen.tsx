@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useGameStore } from '@/hooks/use-game-store'
@@ -10,7 +10,6 @@ export function IntroScreen() {
   const [showContent, setShowContent] = useState(false)
   const [skipTypewriter, setSkipTypewriter] = useState(false)
   const startGame = useGameStore((state) => state.startGame)
-  const audioRef = useRef<HTMLAudioElement>(null)
 
   const title = "L'Eco de la Retirada"
   const subtitle = "Batalla de l'Ebre, 1938"
@@ -21,31 +20,9 @@ export function IntroScreen() {
     setSkipTypewriter(true)
   }, [])
 
-  // Play background music on mount
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.play().catch(() => {
-        // Auto-play might be blocked by browser policy
-      })
-    }
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause()
-      }
-    }
-  }, [])
-
-  // Stop music when game starts
-  const handleStartGame = useCallback(() => {
-    if (audioRef.current) {
-      audioRef.current.pause()
-    }
-    startGame()
-  }, [startGame])
-
   useEffect(() => {
     if (skipTypewriter) return
-    
+
     if (displayedTitle === title) {
       setTimeout(() => setShowContent(true), 500)
       return
@@ -84,14 +61,6 @@ export function IntroScreen() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/40" />
       </div>
-
-      {/* Background Music */}
-      <audio 
-        ref={audioRef}
-        src="/audio/ay-carmela.mp3"
-        loop
-        volume={0.5}
-      />
 
       {/* Film Grain Overlay */}
       <div className="film-grain" />
@@ -144,12 +113,12 @@ export function IntroScreen() {
             className="bg-black/70 backdrop-blur-sm border-2 border-[#b8a038] p-6 mb-8 text-left"
           >
             <p className="font-mono text-sm leading-relaxed text-[#f5e6d3]/90">
-              <span className="text-[#b8a038] font-bold">Agost de 1938.</span> La República Espanyola s&apos;enfronta al seu últim combat decisiu. 
+              <span className="text-[#b8a038] font-bold">Agost de 1938. FET per: Marcel, Martí, Asier, Eloi</span> La República Espanyola s&apos;enfronta al seu últim combat decisiu.
               Les Brigades Internacionals i l&apos;Exèrcit Popular tanquen files a la Serra de Pàndols.
             </p>
             <div className="w-16 h-0.5 bg-[#b8a038]/50 my-4" />
             <p className="font-mono text-sm leading-relaxed text-[#f5e6d3]/70">
-              La teva missió: coordinar l&apos;ajuda internacional i desxifrar els codis de retirada 
+              La teva missió: coordinar l&apos;ajuda internacional i desxifrar els codis de retirada
               abans que l&apos;ofensiva franquista tanqui totes les vies d&apos;escapament. <span className="text-[#fbbf24]">Tens 30 minuts.</span>
             </p>
           </motion.div>
@@ -183,7 +152,7 @@ export function IntroScreen() {
             transition={{ duration: 0.5, delay: 0.6 }}
             whileHover={{ scale: 1.05, backgroundColor: '#4ade80' }}
             whileTap={{ scale: 0.95 }}
-            onClick={handleStartGame}
+            onClick={startGame}
             className="px-10 py-4 bg-[#b8a038] text-black font-bold uppercase text-sm tracking-widest transition-colors"
           >
             Entrar al Búnquer
